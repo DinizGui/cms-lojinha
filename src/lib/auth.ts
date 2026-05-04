@@ -8,26 +8,26 @@ function secretBytes(): Uint8Array | null {
   return new TextEncoder().encode(s);
 }
 
-export async function signSessionToken(): Promise<string> {
+export async function signSessionToken(adminId: string): Promise<string> {
   const key = secretBytes();
   if (!key) {
     throw new Error("Defina SESSION_SECRET (string longa e aleatória)");
   }
-  return new SignJWT({ sub: "admin" })
+  return new SignJWT({ sub: adminId })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("7d")
     .sign(key);
 }
 
-export async function verifySessionToken(token: string): Promise<boolean> {
+export async function verifySessionToken(token: string): Promise<string | null> {
   const key = secretBytes();
-  if (!key) return false;
+  if (!key) return null;
   try {
-    await jwtVerify(token, key);
-    return true;
+    const { payload } = await jwtVerify(token, key);
+    return typeof payload.sub === "string" ? payload.sub : null;
   } catch {
-    return false;
+    return null;
   }
 }
 

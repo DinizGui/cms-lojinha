@@ -26,16 +26,27 @@ export default async function EditarProdutoPage({
   const categories = catRows as { slug: string; name: string }[];
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8">
-      <Link href="/produtos" className="text-sm text-zinc-500 underline hover:text-zinc-800">
-        ← Voltar
+    <div className="mx-auto max-w-3xl px-4 py-10 md:py-12 animate-fade-in">
+      <Link
+        href="/produtos"
+        className="inline-flex items-center gap-1.5 text-sm text-[var(--fg-muted)] transition hover:text-[var(--fg)]"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M19 12H5M11 18l-6-6 6-6" />
+        </svg>
+        Voltar
       </Link>
       <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
-        <h1 className="text-xl font-semibold text-zinc-900">Editar produto</h1>
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wider text-[var(--fg-muted)]">Catálogo</p>
+          <h1 className="mt-1 text-2xl font-semibold tracking-tight text-[var(--fg)]">Editar produto</h1>
+          <p className="mt-1 font-mono text-xs text-[var(--fg-muted)]">ID: {id}</p>
+        </div>
         <DeleteProductButton id={id} />
       </div>
-      <p className="mt-1 font-mono text-xs text-zinc-500">ID: {id}</p>
-      <ProductForm categories={categories} initial={product} />
+      <div className="mt-8 surface p-6 md:p-8 animate-fade-in delay-1">
+        <ProductForm categories={categories} initial={product} />
+      </div>
     </div>
   );
 }

@@ -6,10 +6,11 @@ import "./globals.css";
 const dmSans = DM_Sans({
   variable: "--font-body",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
-  title: "Painel — Produtos",
+  title: "Painel — Loja da Jana",
   description: "Gestão de produtos da loja",
 };
 
@@ -20,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className={`${dmSans.variable} h-full antialiased`}>
-      <body className="min-h-full bg-zinc-50 font-sans text-zinc-900">
+      <body className="min-h-full bg-[var(--bg)] font-sans text-[var(--fg)]">
         <AppShell>{children}</AppShell>
       </body>
     </html>

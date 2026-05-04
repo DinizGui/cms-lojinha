@@ -15,9 +15,9 @@ export async function middleware(req: NextRequest) {
   }
 
   const token = req.cookies.get(COOKIE)?.value;
-  const ok = token ? await verifySessionToken(token) : false;
+  const adminId = token ? await verifySessionToken(token) : null;
 
-  if (!ok) {
+  if (!adminId) {
     if (pathname.startsWith("/api/")) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
