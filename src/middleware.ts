@@ -1,0 +1,34 @@
+import { type NextRequest, NextResponse } from "next/server";
+import { COOKIE, verifySessionToken } from "@/lib/auth";
+
+export async function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+
+  if (
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/api/auth/login") ||
+    pathname.startsWith("/api/auth/logout") ||
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/favicon.ico")
+  ) {
+    return NextResponse.next();
+  }
+
+  const token = req.cookies.get(COOKIE)?.value;
+  const ok = token ? await verifySessionToken(token) : false;
+
+  if (!ok) {
+    if (pathname.startsWith("/api/")) {
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+    }
+    const login = new URL("/login", req.url);
+    login.searchParams.set("from", pathname);
+    return NextResponse.redirect(login);
+  }
+
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: ["/((?!_next/static|_next/image|.*\\..*$).*)"],
+};
