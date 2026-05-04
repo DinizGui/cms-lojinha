@@ -4,8 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const NAV = [
-  { href: "/produtos",      label: "Produtos",      icon: "box" },
-  { href: "/produtos/novo", label: "Novo produto",  icon: "plus" },
+  { href: "/produtos",       label: "Produtos",       icon: "box",     match: "/produtos" },
+  { href: "/produtos/novo",  label: "Novo produto",   icon: "plus",    match: "/produtos/novo", exact: true },
+  { href: "/categorias",     label: "Categorias",     icon: "tag",     match: "/categorias" },
+  { href: "/categorias/novo", label: "Nova categoria", icon: "plus",   match: "/categorias/novo", exact: true },
 ];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -29,17 +31,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
         <nav className="flex-1 space-y-1 px-3 py-4">
           {NAV.map((item, i) => {
-            const active =
-              item.href === "/produtos"
-                ? pathname === "/produtos" || pathname.startsWith("/produtos/")
-                  ? !pathname.startsWith("/produtos/novo")
-                  : false
-                : pathname === item.href;
+            const active = item.exact
+              ? pathname === item.match
+              : pathname === item.match || (pathname.startsWith(item.match + "/") && !pathname.endsWith("/novo"));
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`nav-item animate-slide-in-left delay-${i + 1} ${active ? "active" : ""}`}
+                className={`nav-item animate-slide-in-left delay-${Math.min(4, i + 1)} ${active ? "active" : ""}`}
               >
                 <Icon name={item.icon} />
                 <span>{item.label}</span>
@@ -119,6 +118,13 @@ function Icon({ name }: { name: string }) {
       return (
         <svg {...props}>
           <path d="M12 5v14M5 12h14" />
+        </svg>
+      );
+    case "tag":
+      return (
+        <svg {...props}>
+          <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82Z" />
+          <circle cx="7" cy="7" r="1.5" />
         </svg>
       );
     case "logout":
