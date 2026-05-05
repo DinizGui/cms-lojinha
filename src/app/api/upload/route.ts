@@ -40,18 +40,19 @@ export async function POST(req: Request) {
   try {
     const bucket = getBucket();
     const f = bucket.file(path);
+    const token = nanoid(32);
     await f.save(buf, {
       contentType: file.type,
       resumable: false,
-      metadata: { cacheControl: "public, max-age=31536000" },
+      metadata: {
+        cacheControl: "public, max-age=31536000",
+        metadata: { firebaseStorageDownloadTokens: token },
+      },
     });
 
-    const expires = Date.now() + 1000 * 60 * 60 * 24 * 365 * 10;
-    const [url] = await f.getSignedUrl({
-      version: "v4",
-      action: "read",
-      expires,
-    });
+    const url =
+      `https://firebasestorage.googleapis.com/v0/b/${bucket.name}` +
+      `/o/${encodeURIComponent(path)}?alt=media&token=${token}`;
 
     return NextResponse.json({ url, path });
   } catch (e) {
